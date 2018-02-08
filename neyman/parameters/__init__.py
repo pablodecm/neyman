@@ -3,5 +3,5 @@ from __future__ import division
 from __future__ import print_function
 
 from neyman.parameters.parameter import *
-from neyman.parameters.parameter import *
+from neyman.parameters.parameters import *
 
