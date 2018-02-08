@@ -5,7 +5,7 @@ from __future__ import print_function
 import tensorflow as tf
 from neyman.parameters import Normal, Poisson
 
-class test_parameter(tf.test.TestCase):
+class test_parameter_class(tf.test.TestCase):
 
   def _test_parameter_constructor(self, param_class, *args, **kwargs):
     param = param_class(*args, **kwargs) 
