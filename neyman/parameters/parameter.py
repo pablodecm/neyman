@@ -42,7 +42,7 @@ class Parameter(RandomVariable):
       kwargs['name'] = ns
 
     # pop and store RandomVariable-specific parameters in _kwargs
-    sample_shape = kwargs.pop('sample_shape', ())
+    sample_shape = kwargs.pop('sample_shape', (None,))
     value = kwargs.pop('value', None)
     collections = kwargs.pop('collections', ["random_variables"])
 
@@ -59,9 +59,13 @@ class Parameter(RandomVariable):
 
     super(RandomVariable, self).__init__(*args, **kwargs)
 
+    self._placeholder_shape = tf.TensorShape(sample_shape) \
+        .concatenate(self.batch_shape).concatenate(self.event_shape)
+
     with tf.name_scope(name) as ns:
-      self._value = tf.placeholder(shape=(None,), dtype=self.dtype,
-                                   name="placeholder")
+      self._value = tf.placeholder_with_default(
+          self.sample(tf.TensorShape((1,))),
+          shape=self._placeholder_shape, name="placeholder")
 
     for collection in collections:
       if collection == "random_variables":
