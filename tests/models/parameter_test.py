@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
-from neyman.parameters import Normal, Poisson
+from neyman.models import Normal, Poisson
 
 class test_parameter_class(tf.test.TestCase):
 
