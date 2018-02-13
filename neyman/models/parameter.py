@@ -50,8 +50,8 @@ class Parameter(RandomVariable):
     self._args = args
     self._kwargs = kwargs.copy()
 
-    if sample_shape != ():
-      self._kwargs['sample_shape'] = sample_shape
+#    if sample_shape != ():
+#      self._kwargs['sample_shape'] = sample_shape
     if value is not None:
       self._kwargs['value'] = value
     if collections != ["random_variables"]:
@@ -59,13 +59,21 @@ class Parameter(RandomVariable):
 
     super(RandomVariable, self).__init__(*args, **kwargs)
 
-    self._placeholder_shape = tf.TensorShape(sample_shape) \
-        .concatenate(self.batch_shape).concatenate(self.event_shape)
+    self._placeholder_shape = tf.TensorShape([None,]) \
+        .concatenate(self.event_shape)
 
     with tf.name_scope(name) as ns:
-      self._value = tf.placeholder_with_default(
-          self.sample(tf.TensorShape((1,))),
-          shape=self._placeholder_shape, name="placeholder")
+      if self.batch_shape.is_compatible_with(tf.TensorShape([])):
+        self._value = tf.placeholder_with_default(
+            self.sample(tf.TensorShape((1,))),
+            shape=self._placeholder_shape, name="placeholder")
+      elif self.batch_shape.is_compatible_with(tf.TensorShape([None])):
+        self._value = tf.placeholder_with_default(
+            self.sample(),
+            shape=self._placeholder_shape, name="placeholder")
+      else:  
+        raise ValueError("Parameter batch_shape can only be \
+                          scalar ( or parameter realizations (None,)")
 
     for collection in collections:
       if collection == "random_variables":

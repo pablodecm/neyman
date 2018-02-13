@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import inspect as _inspect
 
-from neyman.parameters.parameter import Parameter as _Parameter
+from neyman.models.parameter import Parameter as _Parameter
 from tensorflow.contrib import distributions as _distributions
 
 # Automatically generate parameter classes from classes in
