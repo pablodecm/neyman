@@ -22,7 +22,10 @@ def batch_gradient(ys, pars, name="batched_gradients",
   # expand dimensions if scalar-dim parameter
   _gradients = [tf.expand_dims(g,1) if len(g.shape)==1 else g for g
                 in _gradients]
-  return tf.concat(_gradients,axis=1)
+  # reshape to deal with scalars 
+  grad_shape = pars[0].shape.concatenate(tf.TensorShape([len(pars)]))
+
+  return tf.reshape(tf.stack(_gradients,axis=-1), grad_shape)
   
 def batch_hessian(ys, pars, name="batched_hessian",
     colocate_gradients_with_ops=False, gate_gradients=False,
@@ -40,8 +43,7 @@ def batch_hessian(ys, pars, name="batched_hessian",
   # Compute first-order derivatives
   _batch_gradients = batch_gradient(ys, pars, **kwargs)
 
-  for i in range(_batch_gradients.shape[1]):
-    _gradient = _batch_gradients[:,i]
+  for i, _gradient in enumerate(tf.unstack(_batch_gradients, axis=-1)):
     grad_gradients = tf.gradients(_gradient, pars, **kwargs)
     # zero also when second derivative is None
     grad_gradients = [tf.zeros_like(pars[j]) if g_grad is None else g_grad
@@ -49,8 +51,10 @@ def batch_hessian(ys, pars, name="batched_hessian",
     # expand dimensions if scalar-dim parameter
     grad_gradients = [tf.expand_dims(g,1) if len(g.shape)==1 else g for g
                       in grad_gradients]
+    # reshape to deal with scalars 
+    grad_shape = pars[i].shape.concatenate(tf.TensorShape([len(pars)]))
 
-    batch_hessian.append(tf.concat(grad_gradients,axis=1))
+    batch_hessian.append(tf.reshape(tf.stack(grad_gradients,axis=-1), grad_shape))
 
-  return tf.stack(batch_hessian, axis=2), _batch_gradients
+  return tf.stack(batch_hessian, axis=-1), _batch_gradients
     
