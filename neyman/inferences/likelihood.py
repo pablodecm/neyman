@@ -48,7 +48,7 @@ def log_likelihood_with_constraints(data, pois, constraints=None):
 
   for par in pars_const:
     if not par.get_ancestors(): 
-      ll_const[par] = key.log_prob(par)
+      ll_const[par] = par.log_prob(par)
     else:
       raise ValueError("Non-POI cannot have ancestors")
 
