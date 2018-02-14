@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 import tensorflow as tf
 
-from neyman.models import Parameter 
+from neyman.models import RandomVariable 
 
 def asimov_dataset(observed_vars):
   """ Returns a dict with Asimov dataset tensors.
@@ -18,7 +18,7 @@ def asimov_dataset(observed_vars):
   asimov = OrderedDict() 
 
   for obs_var in observed_vars:
-    if isinstance(obs_var, Parameter):
+    if isinstance(obs_var, RandomVariable):
       # mean will match the expectation for most distributions
       # gradient is stopped because it will be used as pseudo-data
       asimov[obs_var] = tf.stop_gradient(obs_var.mean())

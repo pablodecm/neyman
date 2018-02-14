@@ -5,7 +5,7 @@ from __future__ import print_function
 import six
 import tensorflow as tf
 
-from neyman.models import Parameter 
+from neyman.models import RandomVariable 
 
 
 def log_likelihood(data):
@@ -15,7 +15,7 @@ def log_likelihood(data):
   parameters = set()
 
   for (key, value) in six.iteritems(data):
-    if isinstance(key, Parameter):
+    if isinstance(key, RandomVariable):
       data_value = tf.convert_to_tensor(value)
       log_likelihood[key] = key.log_prob(data_value)
       parameters.update(set(key.get_ancestors()))
