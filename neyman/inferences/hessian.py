@@ -25,7 +25,7 @@ def batch_gradient(ys, pars, name="batched_gradients",
   # reshape to deal with scalars 
   grad_shape = pars[0].shape.concatenate(tf.TensorShape([len(pars)]))
 
-  return tf.reshape(tf.stack(_gradients,axis=-1), grad_shape)
+  return tf.reshape(tf.stack(_gradients,axis=-1), grad_shape, name=name)
   
 def batch_hessian(ys, pars, name="batched_hessian",
     colocate_gradients_with_ops=False, gate_gradients=False,
@@ -56,5 +56,5 @@ def batch_hessian(ys, pars, name="batched_hessian",
 
     batch_hessian.append(tf.reshape(tf.stack(grad_gradients,axis=-1), grad_shape))
 
-  return tf.stack(batch_hessian, axis=-1), _batch_gradients
+  return tf.stack(batch_hessian, axis=-1, name=name), _batch_gradients
     
