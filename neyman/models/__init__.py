@@ -3,4 +3,5 @@ from __future__ import division
 from __future__ import print_function
 
 from edward.models import *
+from .independent_list import IndependentList
 
