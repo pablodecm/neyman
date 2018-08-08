@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 from tensorflow.python.ops.distributions import distribution as distribution_lib
+import numpy as np
 
 class IndependentList(distribution_lib.Distribution):
   """Independent distribution from a list of distributions.
@@ -63,7 +64,11 @@ class IndependentList(distribution_lib.Distribution):
     return event_shape
 
   def _sample_n(self, n, seed):
-    samples = [ tf.reshape(d.sample(n),[n,-1]) for d in self.distributions]
+    rs = np.random.RandomState(seed=seed)
+    # get random seeds (have to be Python ints)
+    seeds = rs.random_integers(low=0,high=10000, size=len(self.distributions))
+    samples = [tf.reshape(d.sample(n, seed=seed),[n,-1])
+               for s,d in zip(seeds,self.distributions)]
     return tf.concat(samples, axis=-1)
 
   def _log_prob(self, x):
