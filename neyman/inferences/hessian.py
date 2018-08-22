@@ -21,12 +21,12 @@ def batch_gradient(ys, pars, name="batched_gradients",
                       for j, grad in enumerate(_gradients)]
   # expand dimensions if scalar-dim parameter
   _gradients = [tf.expand_dims(g,1) if len(g.shape)==1 else g for g
-                in _gradients]
-  # reshape to deal with scalars 
+                in grad_gradients]
+  # reshape to deal with scalars
   grad_shape = tf.concat([tf.shape(pars[0]),[len(pars)]],axis=0)
 
   return tf.reshape(tf.stack(_gradients,axis=-1), grad_shape, name=name)
-  
+
 def batch_hessian(ys, pars, name="batched_hessian",
     colocate_gradients_with_ops=False, gate_gradients=False,
     aggregation_method=None):
@@ -51,10 +51,10 @@ def batch_hessian(ys, pars, name="batched_hessian",
     # expand dimensions if scalar-dim parameter
     grad_gradients = [tf.expand_dims(g,1) if len(g.shape)==1 else g for g
                       in grad_gradients]
-    # reshape to deal with scalars 
+    # reshape to deal with scalars
     grad_shape = tf.concat([tf.shape(pars[i]),[len(pars)]], axis=0)
 
     batch_hessian.append(tf.reshape(tf.stack(grad_gradients,axis=-1), grad_shape))
 
   return tf.stack(batch_hessian, axis=-1, name=name), _batch_gradients
-    
+

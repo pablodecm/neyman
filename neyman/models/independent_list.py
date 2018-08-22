@@ -66,12 +66,13 @@ class IndependentList(distribution_lib.Distribution):
   def _sample_n(self, n, seed):
     rs = np.random.RandomState(seed=seed)
     # get random seeds (have to be Python ints)
-    seeds = rs.random_integers(low=0,high=10000, size=len(self.distributions))
+    seeds = rs.randint(low=0,high=10000, size=len(self.distributions))
     samples = [tf.reshape(d.sample(n, seed=seed),[n,-1])
                for s,d in zip(seeds,self.distributions)]
     return tf.concat(samples, axis=-1)
 
   def _log_prob(self, x):
+    # beware caching in bijector composed distributions
     splitted_x = tf.split(x, self.event_shapes, axis=-1)
     log_probs = [tf.reshape(d.log_prob(x_i),
                    tf.concat([tf.shape(x_i)[:-1], [-1]], axis=-1))
