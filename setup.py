@@ -9,7 +9,7 @@ setup(
   author='Pablo de Castro',
   author_email='pablodecm@gmail.com',
   packages=['neyman','neyman.models','neyman.inferences'],
-  install_requires=['numpy>=1.7','edward>=1.3'],
+  install_requires=['numpy>=1.7','tensorflow-probability>=0.6'],
   tests_require=['pytest', 'pytest-pep8'],
 )
 
